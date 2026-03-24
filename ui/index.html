@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ProtoAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Monaco Loader (LOCAL, NOT CDN) - optional, kept for future code workspace -->
+  <script>
+    window.require = { paths: { vs: "Lib/monaco/vs" } };
+  </script>
+  <script src="Lib/monaco/vs/loader.js"></script>
+  <script src="Lib/monaco/vs/editor/editor.main.nls.js"></script>
+  <script src="Lib/monaco/vs/editor/editor.main.js"></script>
+
+  <!-- Marked.js for Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <!-- LEFT SIDEBAR -->
+    <aside id="sidebar">
+      <div id="brand">
+        <div class="brand-title">ProtoAI</div>
+        <div class="brand-tagline">
+          A UI that feels like VS Code + Cursor + Claude + Notion had a child.
+        </div>
+      </div>
+
+      <button id="newProjectBtn" class="primary-btn">+ New Project</button>
+
+      <div id="profileBubble">
+        <div class="profile-avatar">P</div>
+        <div class="profile-info">
+          <div class="profile-label">Profile</div>
+          <div id="currentProfileName" class="profile-name">No profile</div>
+        </div>
+        <select id="profileSelect" title="Select profile"></select>
+      </div>
+
+      <h2>Projects</h2>
+      <ul id="projectList"></ul>
+
+      <div id="chatsHeader">
+        <h2>Chats</h2>
+        <button id="newChatBtn" class="small-btn">+ Chat</button>
+      </div>
+      <div id="chatTabs"></div>
+    </aside>
+
+    <!-- CENTER WORKSPACE -->
+    <main id="workspace">
+      <header id="topbar">
+        <div id="currentProjectName">No project selected</div>
+        <div id="layoutControls">
+          <button id="splitToggleBtn" class="icon-btn" title="Toggle split view">⧉</button>
+          <button id="toggleCanvasBtn" class="icon-btn" title="Collapse/expand canvas">▢</button>
+        </div>
+      </header>
+
+      <section id="canvas">
+        <div id="chatContainer"></div>
+
+        <div id="jumpControls">
+          <button id="jumpPrevBtn" class="jump-btn" title="Previous response">◀ Prev</button>
+          <button id="jumpLatestBtn" class="jump-btn" title="Jump to latest">Latest ▾</button>
+        </div>
+
+        <div id="inputBar">
+          <div id="modeSelector">
+            <label for="modeSelect">Mode</label>
+            <select id="modeSelect">
+              <option value="default">Default</option>
+              <option value="coding">Coding</option>
+              <option value="creative">Creative</option>
+              <option value="refactor">Refactor</option>
+              <option value="analysis">Analysis</option>
+              <option value="explain">Explain</option>
+            </select>
+          </div>
+
+          <div id="inputCenter">
+            <button id="attachFileBtn" class="secondary-btn">Attach File</button>
+            <button id="addSourceBtn" class="secondary-btn">Add Sources</button>
+
+            <textarea
+              id="messageInput"
+              placeholder="Ask ProtoAI... (Shift+Enter for newline)"
+            ></textarea>
+          </div>
+
+          <div id="inputRight">
+            <button id="sendBtn" class="primary-btn">Send</button>
+
+            <!-- FOLDER‑AWARE INPUT -->
+            <input
+              id="fileInput"
+              type="file"
+              webkitdirectory
+              directory
+              multiple
+              style="display:none"
+            />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT SIDEBAR (AI CONTROL SURFACE) -->
+    <aside id="rightSidebar">
+      <!-- OTFMS / ACTIVE ENGINE -->
+      <section class="bubble">
+        <div class="bubble-header">
+          <span class="bubble-title">OTFMS</span>
+        </div>
+        <div class="bubble-body">
+          <div class="field-group">
+            <label for="otfmsEngineSelect">Active Engine</label>
+            <select id="otfmsEngineSelect"></select>
+          </div>
+          <button id="applyEngineBtn" class="primary-btn full-width">
+            Apply to Current Chat
+          </button>
+        </div>
+      </section>
+
+      <!-- CONTEXT & FILES -->
+      <section class="bubble" id="contextBubble">
+        <div class="bubble-header" data-target="contextBody">
+          <span class="bubble-title">Context &amp; Files</span>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="bubble-body" id="contextBody">
+          <div id="contextFilesEmpty" class="empty-state">
+            No files added yet.
+          </div>
+          <ul id="contextFileList"></ul>
+        </div>
+      </section>
+
+      <!-- TOOLS -->
+      <section class="bubble" id="toolsBubble">
+        <div class="bubble-header" data-target="toolsBody">
+          <span class="bubble-title">Tools</span>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="bubble-body" id="toolsBody">
+          <button class="tool-chip" data-action="image">🖼 Generate Image</button>
+          <button class="tool-chip" data-action="deepsearch">🔎 Deep Search</button>
+          <button class="tool-chip" data-action="podcast">🎙 Create Podcast</button>
+          <button class="tool-chip" data-action="quiz">🧠 Take Quiz</button>
+          <button class="tool-chip" data-action="connectors">🔌 Use Connectors</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Shortcut Overlay -->
+  <div id="shortcutOverlay" class="hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
